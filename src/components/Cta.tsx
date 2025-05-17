@@ -1,8 +1,10 @@
-import React from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 import Button from './common/Button';
+import { useNavigate } from 'react-router-dom';
+
 
 const Cta: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="py-20 bg-gradient-to-br from-indigo-900/40 via-slate-900 to-purple-900/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,7 +15,7 @@ const Cta: React.FC = () => {
                 Ready to Accept Crypto Payments?
               </h2>
               <p className="text-xl text-gray-300 mb-6">
-                Join thousands of businesses already using CryptoGate to accept cryptocurrency payments globally.
+                Join thousands of businesses already using Omnium to accept cryptocurrency payments globally.
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -36,12 +38,12 @@ const Cta: React.FC = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="group">
+                <Button size="lg" className="group" onClick={() =>navigate('/merchant')}>
                   Start for Free
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
-                <Button variant="outline" size="lg">
-                  Schedule a Demo
+                <Button variant="outline" size="lg"  onClick={() => window.open('https://github.com/Reinhartsamuel/omnium-frontend')}>
+                  View Docs
                 </Button>
               </div>
             </div>

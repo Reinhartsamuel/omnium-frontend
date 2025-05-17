@@ -18,10 +18,10 @@ const Integration: React.FC = () => {
     switch (activeTab) {
       case 'js':
         return `
-// Initialize the CryptoGate client
-import { CryptoGate } from 'cryptogate-js';
+// Initialize the omnium client
+import { omnium } from 'omnium-js';
 
-const gateway = new CryptoGate({
+const gateway = new omnium({
   apiKey: 'your_api_key',
   environment: 'production' // or 'sandbox' for testing
 });
@@ -53,11 +53,11 @@ document.getElementById('pay-button').addEventListener('click', createPayment);
       case 'react':
         return `
 import React, { useState } from 'react';
-import { useCryptoGate } from 'cryptogate-react';
+import { useomnium } from 'omnium-react';
 
 function PaymentButton({ amount, orderId }) {
   const [loading, setLoading] = useState(false);
-  const { createSession } = useCryptoGate({
+  const { createSession } = useomnium({
     apiKey: 'your_api_key'
   });
 
@@ -95,14 +95,14 @@ export default PaymentButton;
       case 'node':
         return `
 const express = require('express');
-const { CryptoGate } = require('cryptogate-node');
+const { omnium } = require('omnium-node');
 
 const app = express();
 app.use(express.json());
 
-// Initialize the CryptoGate client
-const gateway = new CryptoGate({
-  apiKey: process.env.CRYPTOGATE_API_KEY,
+// Initialize the omnium client
+const gateway = new omnium({
+  apiKey: process.env.omnium_API_KEY,
   environment: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'
 });
 
@@ -132,7 +132,7 @@ app.post('/api/create-payment', async (req, res) => {
 
 // Webhook to receive payment notifications
 app.post('/webhooks/payment', async (req, res) => {
-  const signature = req.headers['cryptogate-signature'];
+  const signature = req.headers['omnium-signature'];
   
   try {
     const event = gateway.verifyWebhook(req.body, signature);

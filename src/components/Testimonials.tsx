@@ -6,7 +6,7 @@ const Testimonials: React.FC = () => {
   
   const testimonials = [
     {
-      quote: "Integrating CryptoGate was incredibly simple. We were up and running in less than a day, and our crypto payment volume has increased by 200% since we made the switch.",
+      quote: "Integrating Omnium was incredibly simple. We were up and running in less than a day, and our crypto payment volume has increased by 200% since we made the switch.",
       author: "Sarah Johnson",
       title: "CTO, DigitalEdge",
       image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -16,7 +16,7 @@ const Testimonials: React.FC = () => {
       ]
     },
     {
-      quote: "CryptoGate's API is the most developer-friendly I've ever worked with. The documentation is clear, support is responsive, and everything just works as expected.",
+      quote: "Omnium's API is the most developer-friendly I've ever worked with. The documentation is clear, support is responsive, and everything just works as expected.",
       author: "Michael Chen",
       title: "Lead Developer, BlockFi",
       image: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",

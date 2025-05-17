@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, CreditCard } from 'lucide-react';
 import Button from './common/Button';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,10 +32,11 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <CreditCard className="h-8 w-8 text-indigo-500" />
-              <span className="ml-2 text-xl font-bold text-white">CryptoGate</span>
-            </div>
+            <img
+              src="/omniumlogohorizontal-removebg-preview.png"
+              alt="Logo"
+              className="h-14 w-auto"
+            />
           </div>
           
           <nav className="hidden md:block">
@@ -52,10 +55,7 @@ const Navbar: React.FC = () => {
           </nav>
           
           <div className="hidden md:block">
-            <Button variant="ghost" className="mr-4">
-              Login
-            </Button>
-            <Button>Get Started</Button>
+            <Button size='lg' onClick={() => navigate('/app')}>Open App</Button>
           </div>
           
           <div className="md:hidden">

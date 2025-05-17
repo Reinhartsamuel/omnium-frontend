@@ -1,8 +1,9 @@
-import React from 'react';
 import { ArrowRight, ShieldCheck, Zap, RefreshCw } from 'lucide-react';
 import Button from './common/Button';
+import { useNavigate } from 'react-router-dom';
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,11 +20,14 @@ const Hero: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="lg" className="group">
+              <Button size="lg" className="group" onClick={() =>navigate('/merchant')}>
                 Start for Free
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button variant="outline" size="lg">
+              <Button size="lg" className="group" onClick={() =>window.open('/app')}>
+                Open App
+              </Button>
+              <Button variant="outline" size="lg" onClick={() => window.open('https://github.com/Reinhartsamuel/omnium-frontend')}>
                 View Documentation
               </Button>
             </div>

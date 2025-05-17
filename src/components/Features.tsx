@@ -105,16 +105,16 @@ const Features: React.FC = () => {
               </div>
               <pre className="space-y-2">
                 {/* <code className="block">
-                  <span className="text-green-400">$</span> npm install <span className="text-indigo-400">cryptogate-js</span>
+                  <span className="text-green-400">$</span> npm install <span className="text-indigo-400">omnium-js</span>
                 </code>
                 <code className="block">
                   <span className="text-gray-500"># Initialize the payment gateway</span>
                 </code>
                 <code className="block">
-                  <span className="text-purple-400">import</span> CryptoGate <span className="text-purple-400">from</span> <span className="text-green-400">'cryptogate-js'</span>;
+                  <span className="text-purple-400">import</span> omnium <span className="text-purple-400">from</span> <span className="text-green-400">'omnium-js'</span>;
                 </code>
                 <code className="block">
-                  <span className="text-blue-400">const</span> gateway = <span className="text-purple-400">new</span> CryptoGate({
+                  <span className="text-blue-400">const</span> gateway = <span className="text-purple-400">new</span> omnium({
                 </code>
                 <code className="block pl-2">
                   apiKey: <span className="text-green-400">'your_api_key'</span>,

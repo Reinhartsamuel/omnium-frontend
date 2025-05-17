@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
           <div className="md:col-span-2">
             <div className="flex items-center mb-6">
               <CreditCard className="h-8 w-8 text-indigo-500" />
-              <span className="ml-2 text-xl font-bold text-white">CryptoGate</span>
+              <span className="ml-2 text-xl font-bold text-white">Omnium</span>
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
               The easiest way to accept cryptocurrency payments online. Quick setup, powerful features, and enterprise-grade security.
@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-slate-800 pt-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <p className="text-gray-500 text-sm mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} CryptoGate. All rights reserved.
+              &copy; {new Date().getFullYear()} Omnium. All rights reserved.
             </p>
             <div className="flex flex-wrap gap-x-8 gap-y-2">
               <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">

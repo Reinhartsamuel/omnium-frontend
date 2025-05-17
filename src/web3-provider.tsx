@@ -2,16 +2,24 @@ import React from 'react';
 import { Config, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { XellarKitProvider, defaultConfig, darkTheme } from '@xellar/kit';
-import { liskSepolia, sepolia } from 'viem/chains';
+import {
+  // arbitrumSepolia,
+  liskSepolia,
+  // sepolia
+} from 'viem/chains';
 
 const config = defaultConfig({
   appName: 'Xellar',
   // Required for WalletConnect
-  walletConnectProjectId: "cab1de508b81cac80dfc6a2408a25144",
+  walletConnectProjectId: import.meta.env.VITE_WC_PROJECT_ID,
   // Required for Xellar Passport
-  xellarAppId: "3f7748a7-2343-496a-8b8c-7acfd1837d6c",
+  xellarAppId: import.meta.env.VITE_XELLAR_APP_ID,
   xellarEnv: 'sandbox',
-  chains: [liskSepolia, sepolia],
+  chains: [
+    liskSepolia,
+    // sepolia, 
+    // arbitrumSepolia
+  ],
 }) as Config;
 
 const queryClient = new QueryClient();
