@@ -54,8 +54,13 @@ const Navbar: React.FC = () => {
             </ul>
           </nav>
           
-          <div className="hidden md:block">
-            <Button size='lg' onClick={() => navigate('/app')}>Open App</Button>
+          <div className='flex gap-2'>
+            <div className="hidden md:block">
+              <Button size='lg' className='bg-purple-500' onClick={() => navigate('/merchant')}>Merchant</Button>
+            </div>
+            <div className="hidden md:block">
+              <Button size='lg' onClick={() => navigate('/app')}>Open App</Button>
+            </div>
           </div>
           
           <div className="md:hidden">
