@@ -4,7 +4,6 @@ import {
   CreditCard,
   ArrowUpRight,
   ArrowDownLeft,
-  Search,
   Wallet,
   Settings,
   MoreHorizontal,

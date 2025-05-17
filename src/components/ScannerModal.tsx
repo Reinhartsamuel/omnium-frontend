@@ -64,6 +64,7 @@ function ScannerModal({
                                 width={500}
                                 height={500}
                                 onUpdate={(err, result) => {
+                                    alert(err)
                                     if (result) {
                                         setQrString(result.getText());
                                         setIsScanned(true);
