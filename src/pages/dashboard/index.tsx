@@ -187,7 +187,7 @@ function Dashboard() {
         </div>
 
         {/* Crypto Prices */}
-        <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6 mb-6">
+        {/* <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6 mb-6">
           <h2 className="text-xl font-semibold text-white mb-4">My Assets</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-slate-800/40 rounded-lg">
@@ -217,7 +217,7 @@ function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Transactions */}
         <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800">

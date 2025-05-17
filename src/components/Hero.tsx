@@ -50,8 +50,13 @@ const Hero: React.FC = () => {
           
           <div className="w-full lg:w-1/2">
             <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur-2xl opacity-20 animate-pulse"></div>
-              <div className="relative bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur-2xl opacity-10 animate-pulse"></div>
+              <img
+                  src="/OmniumQrExample.jpg"
+                  alt="Omnium QR Code Example"
+                  className="w-full rounded-xl shadow-2xl"
+                />
+              {/* <div className="relative bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
                 <div className="p-8">
                   <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-medium text-white">Payment Dashboard</h3>
@@ -65,7 +70,7 @@ const Hero: React.FC = () => {
                     <div className="bg-slate-700/50 p-6 rounded-xl">
                       <div className="flex justify-between mb-4">
                         <span className="text-gray-400 text-lg">Today's Volume</span>
-                        <span className="text-white font-medium text-xl">$12,438.28</span>
+                        <span className="text-white font-medium text-xl">IDRX 12,438.28</span>
                       </div>
                       <div className="w-full bg-slate-600/50 h-3 rounded-full overflow-hidden">
                         <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full" style={{ width: '70%' }}></div>
@@ -93,7 +98,7 @@ const Hero: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

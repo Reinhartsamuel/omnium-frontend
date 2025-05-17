@@ -3,7 +3,7 @@ import { Banknote, Wallet, Key } from 'lucide-react';
 const QrExample: React.FC = () => {
   return (
     <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-950">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-5xl mx-auto">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">
             Seriously, it's just 3 simple steps
@@ -36,7 +36,7 @@ const QrExample: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <h3 className="text-2xl font-semibold text-white mb-3">3. Start Collecting IDRX</h3>
-                  <p className="text-gray-300 text-lg">Begin accepting IDRX payments from your customers</p>
+                  <p className="text-gray-300 text-lg">Begin accepting IDRX payments from your customers via singleton create order API</p>
                 </div>
               </div>
             </div>
@@ -45,7 +45,7 @@ const QrExample: React.FC = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-xl opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6">
                 <img
-                  src="/OmniumQrExample.jpg"
+                  src="/createOrder.jpg"
                   alt="Omnium QR Code Example"
                   className="w-full rounded-xl shadow-2xl"
                 />
