@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import BottomBar from '../../components/dashboard/BottomBar';
 import { useEffect, useState } from 'react';
+import Navbar from '../../components/dashboard/Navbar';
 
 // const transactions = [
 //   {
@@ -127,18 +128,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Top Navigation */}
-      <nav className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-md mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <img
-              src="/omniumlogohorizontal-removebg-preview.png"
-              alt="Logo"
-              className="h-10 w-auto"
-            />
-
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="max-w-md mx-auto px-4 pt-20 pb-24">
         {/* Balance Card */}
