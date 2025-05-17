@@ -8,6 +8,7 @@ import Pricing from '../components/Pricing';
 import Testimonials from '../components/Testimonials';
 import Cta from '../components/Cta';
 import Footer from '../components/Footer';
+import QrExample from '../components/QrExample';
 
 function LandingPage() {
   return (
@@ -15,6 +16,7 @@ function LandingPage() {
       <Navbar />
       <main>
         <Hero />
+        <QrExample />
         <Features />
         <Currencies />
         <Integration />

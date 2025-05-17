@@ -5,7 +5,7 @@ import { ApiKeyModal } from '../components/dashboard/ApiKeyModal'
 import { DeleteConfirmationModal } from '../components/dashboard/DeleteConfirmationModal'
 
 const MerchantDashboard = () => {
-  const { address, isConnected } = useAccount()
+  const { isConnected } = useAccount()
   const [dateRange, setDateRange] = useState('today')
   const [showNewKeyModal, setShowNewKeyModal] = useState(false)
   const [newKeyName, setNewKeyName] = useState('')
@@ -29,7 +29,7 @@ const MerchantDashboard = () => {
   }
 
   const handleDeleteKey = (id: string) => {
-    setApiKeys(apiKeys.filter(key => key.id !== id))
+    setDeleteKeyId(id)
   }
 
   const confirmDelete = () => {
@@ -236,6 +236,43 @@ const MerchantDashboard = () => {
             </div>
           </div>
         </div>
+      )}
+      {/* API Keys Table */}
+      <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 mb-8">
+        {/* ... table header ... */}
+        <tbody className="text-sm">
+          {apiKeys.map(key => (
+            <tr key={key.id} className="border-b border-slate-800">
+              <td className="py-4 text-slate-300">{key.name}</td>
+              <td className="py-4 text-slate-300">{key.key}</td>
+              <td className="py-4 text-slate-300">{key.created}</td>
+              <td className="py-4">
+                <button
+                  onClick={() => handleDeleteKey(key.id)}
+                  className="text-red-500 hover:text-red-400 transition"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </div>
+
+      {/* Modals */}
+      {showNewKeyModal && (
+        <ApiKeyModal
+          onClose={() => setShowNewKeyModal(false)}
+          onSubmit={handleCreateKey}
+        />
+      )}
+
+      {deleteKeyId && (
+        <DeleteConfirmationModal
+          keyName={apiKeys.find(k => k.id === deleteKeyId)?.name || ''}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteKeyId(null)}
+        />
       )}
     </div>
   )

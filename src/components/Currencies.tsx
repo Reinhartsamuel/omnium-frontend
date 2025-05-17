@@ -1,127 +1,86 @@
-import React, { useState } from 'react';
-import { ArrowRight, Info } from 'lucide-react';
-import Button from './common/Button';
+import { ShieldCheck, Banknote, Zap, Wallet, Key } from 'lucide-react';
 
 const Currencies: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'popular' | 'all'>('popular');
-  
-  const popularCurrencies = [
-    { symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', popular: true },
-    { symbol: 'ETH', name: 'Ethereum', color: '#627EEA', popular: true },
-    { symbol: 'USDT', name: 'Tether', color: '#26A17B', popular: true },
-    { symbol: 'USDC', name: 'USD Coin', color: '#2775CA', popular: true },
-    { symbol: 'BNB', name: 'Binance Coin', color: '#F3BA2F', popular: true },
-    { symbol: 'XRP', name: 'Ripple', color: '#23292F', popular: true },
-    { symbol: 'ADA', name: 'Cardano', color: '#0033AD', popular: true },
-    { symbol: 'SOL', name: 'Solana', color: '#14F195', popular: true },
-  ];
-  
-  const allCurrencies = [
-    ...popularCurrencies,
-    { symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633', popular: false },
-    { symbol: 'DOT', name: 'Polkadot', color: '#E6007A', popular: false },
-    { symbol: 'AVAX', name: 'Avalanche', color: '#E84142', popular: false },
-    { symbol: 'SHIB', name: 'Shiba Inu', color: '#FFA409', popular: false },
-    { symbol: 'MATIC', name: 'Polygon', color: '#8247E5', popular: false },
-    { symbol: 'LTC', name: 'Litecoin', color: '#345D9D', popular: false },
-    { symbol: 'LINK', name: 'Chainlink', color: '#2A5ADA', popular: false },
-    { symbol: 'UNI', name: 'Uniswap', color: '#FF007A', popular: false },
-    { symbol: 'ATOM', name: 'Cosmos', color: '#2E3148', popular: false },
-    { symbol: 'XLM', name: 'Stellar', color: '#7D00FF', popular: false },
-    { symbol: 'ALGO', name: 'Algorand', color: '#000000', popular: false },
-    { symbol: 'BCH', name: 'Bitcoin Cash', color: '#8DC351', popular: false },
-  ];
-  
-  const displayCurrencies = activeTab === 'popular' ? popularCurrencies : allCurrencies;
-
   return (
     <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-950">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Support for 50+ Cryptocurrencies
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Accept IDRX Payments
           </h2>
-          <p className="text-xl text-gray-300">
-            Accept all major cryptocurrencies and tokens with a single integration
+          <p className="text-xl text-gray-300 mb-8">
+            The first Indonesian Rupiah ERC20 stablecoin for seamless digital transactions
           </p>
-        </div>
-        
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex p-1 bg-slate-800 rounded-lg">
-            <button
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                activeTab === 'popular'
-                  ? 'bg-indigo-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white'
-              }`}
-              onClick={() => setActiveTab('popular')}
-            >
-              Popular
-            </button>
-            <button
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                activeTab === 'all'
-                  ? 'bg-indigo-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white'
-              }`}
-              onClick={() => setActiveTab('all')}
-            >
-              All Supported
-            </button>
+          <div className="flex justify-center mb-12">
+            <img
+              src="https://home.idrx.co/_next/image?url=%2Fassets%2Fidrx-logo-horizontal.png&w=1200&q=75"
+              alt="IDRX Logo"
+              className="w-40 object-contain"
+            />
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {displayCurrencies.map((currency) => (
-            <div
-              key={currency.symbol}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg p-4 flex flex-col items-center transition-all hover:bg-slate-700/50 hover:border-slate-600/50"
-            >
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-                style={{ backgroundColor: `${currency.color}20` }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white"
-                  style={{ backgroundColor: currency.color }}
-                >
-                  {currency.symbol.substring(0, 1)}
-                </div>
-              </div>
-              <h3 className="font-medium text-white mb-1">{currency.name}</h3>
-              <span className="text-sm text-gray-400">{currency.symbol}</span>
+
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Secured by Lisk Network
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            One of the largest Layer-2 Solution for Ethereum Blockchain
+          </p>
+          <div className="flex justify-center mb-12">
+            <img
+              src="https://www.stockvault.net/data/2018/04/01/244016/preview16.jpg"
+              alt="IDRX Logo"
+              className="w-40 object-contain"
+            />
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-8 text-center">
+            <div className="bg-indigo-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+              <ShieldCheck className="h-8 w-8 text-indigo-400" />
             </div>
-          ))}
-        </div>
-        
-        {activeTab === 'popular' && (
-          <div className="text-center mt-10">
-            <Button 
-              variant="ghost" 
-              className="text-indigo-400 hover:text-indigo-300 group"
-              onClick={() => setActiveTab('all')}
-            >
-              View all supported currencies
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </div>
-        )}
-        
-        <div className="mt-16 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg p-6 flex flex-col md:flex-row items-center">
-          <div className="flex-shrink-0 bg-indigo-500/10 p-3 rounded-full mb-4 md:mb-0 md:mr-6">
-            <Info className="h-8 w-8 text-indigo-400" />
-          </div>
-          <div className="md:flex-1">
-            <h3 className="text-xl font-semibold text-white mb-2 text-center md:text-left">
-              Don't see your preferred cryptocurrency?
-            </h3>
-            <p className="text-gray-300 text-center md:text-left">
-              We're constantly adding support for new cryptocurrencies. Contact our team to request a specific coin or token.
+            <h3 className="text-xl font-semibold text-white mb-4">Secure & Stable</h3>
+            <p className="text-gray-300">
+              1 IDRX = 1 IDR, fully backed and regulated for secure transactions
             </p>
           </div>
-          <div className="mt-6 md:mt-0 md:ml-6 flex-shrink-0">
-            <Button>Contact Us</Button>
+
+          <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-8 text-center">
+            <div className="bg-indigo-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+              <Banknote className="h-8 w-8 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-4">Low Fees</h3>
+            <p className="text-gray-300">
+              Minimize transaction costs with efficient blockchain-based payments
+            </p>
           </div>
+
+          <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-8 text-center">
+            <div className="bg-indigo-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+              <Zap className="h-8 w-8 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-4">Instant Settlement</h3>
+            <p className="text-gray-300">
+              Real-time payment processing with immediate confirmation
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-16 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-8 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center justify-center bg-indigo-500/10 px-6 py-2 rounded-full text-indigo-400 font-medium text-sm mb-6">
+            Powered by Ethereum
+          </div>
+          <h3 className="text-2xl font-semibold text-white mb-4">
+            Ready to Accept IDRX Payments?
+          </h3>
+          <p className="text-gray-300 mb-8">
+            Join the future of digital payments with IDRX - the bridge between traditional finance and blockchain technology.
+          </p>
+          <button className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105">
+            Get Started Now
+          </button>
         </div>
       </div>
     </section>
