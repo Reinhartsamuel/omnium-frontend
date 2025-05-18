@@ -41,37 +41,30 @@ No fluff. No bloat. Just clean, fast, and secure crypto payments — *made simpl
 
 ## 🛠️ How to Use Omnium
 
-### 1. Clone the repo
-```bash
-git clone https://github.com/your-username/omnium.git 
-```
+### 1. Connect Wallet on Omnium
+Open https://omnium-pg.vercel.app/, then connect wallet. You can use email, or metamask
 
-### 2. Install dependencies
-```bash
-npm Install
-```
-### 3. Configure .env
-Create a .env file in the root:
-```
-PRIVATE_KEY=your_lisk_wallet_private_key
-RPC_URL=https://rpc.lisk.com/mainnet 
-IDRX_CONTRACT_ADDRESS=0x...
-PORT=3000
-```
+### 2. Get API key
+Generate api key on Merchant dashboard
 
-### 4. Start the server
-```
-npm run start
-```
-
-### 5. Make a test payment
+### 3. Get API key on Merchant Dashboard
+Navigate to API Keys section, click Create New Api Key
+### 3. Make a test payment
 Use our Postman collection or send a POST request:
+
+METHOD : POST 
+
+https://omnium-backend-production.up.railway.app/api/order
 
 ```
 {
-  "to": "merchant_wallet_address",
-  "amount": "50000", // in IDRX (equals IDR 50,000)
-  "orderId": "order_12345"
+	"data" : {
+	"seller":"0x753dFC03b4d37B3a316D0Fe5aB9F677C0D3C20f8",
+	"product":"Nike air jordan",
+	"quantity":"2",
+	"price" : 1000000,
+	"callbackUrl":"https://your-backend.com/"
+ }
 }
 ```
 
@@ -127,4 +120,3 @@ Got questions? Want to contribute or sponsor this project?
 ✨ **Omnium** – Where simplicity meets power in crypto payments.  
 🚀 Accept IDRX today. On Lisk. For everyone.
 
-# omnium-frontend
