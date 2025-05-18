@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 
 const Integration: React.FC = () => {
@@ -18,135 +18,129 @@ const Integration: React.FC = () => {
     switch (activeTab) {
       case 'js':
         return `
-// Initialize the omnium client
-import { omnium } from 'omnium-js';
-
-const gateway = new omnium({
-  apiKey: 'your_api_key',
-  environment: 'production' // or 'sandbox' for testing
-});
-
-// Create a payment session
-async function createPayment() {
+// Create an order using fetch
+async function createOrder() {
   try {
-    const session = await gateway.createSession({
-      amount: 100.00,
-      currency: 'USD',
-      redirectUrl: 'https://your-site.com/success',
-      cancelUrl: 'https://your-site.com/cancel',
-      metadata: {
-        orderId: '12345',
-        customerName: 'John Doe'
-      }
+    const response = await fetch('https://omnium-backend-production.up.railway.app/api/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api_key': 'your_api_key'
+      },
+      body: JSON.stringify({
+        data: {
+          seller: '0x753dFC03b4d37B3a316D0Fe5aB9F677C0D3C20f8',
+          product: 'Nike air jordan',
+          quantity: '2',
+          price: 1000000,
+          callbackUrl: 'https://my-backend.com/'
+        }
+      })
     });
-    
-    // Redirect to payment page
-    window.location.href = session.checkoutUrl;
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.text();
+    console.log('Order created:', data);
+    return data;
   } catch (error) {
-    console.error('Payment creation failed:', error);
+    console.error('Error creating order:', error);
   }
 }
 
-// Call the function when user clicks "Pay"
-document.getElementById('pay-button').addEventListener('click', createPayment);
+// Call the function when user clicks "Create Order"
+document.getElementById('create-order-button').addEventListener('click', createOrder);
 `;
       case 'react':
         return `
 import React, { useState } from 'react';
-import { useomnium } from 'omnium-react';
 
-function PaymentButton({ amount, orderId }) {
+function CreateOrderButton() {
   const [loading, setLoading] = useState(false);
-  const { createSession } = useomnium({
-    apiKey: 'your_api_key'
-  });
 
-  const handlePayment = async () => {
+  const handleCreateOrder = async () => {
     setLoading(true);
     try {
-      const session = await createSession({
-        amount,
-        currency: 'USD',
-        redirectUrl: \`\${window.location.origin}/success\`,
-        cancelUrl: \`\${window.location.origin}/cancel\`,
-        metadata: { orderId }
+      const response = await fetch('https://omnium-backend-production.up.railway.app/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': 'your_api_key'
+        },
+        body: JSON.stringify({
+          data: {
+            seller: '0x753dFC03b4d37B3a316D0Fe5aB9F677C0D3C20f8',
+            product: 'Nike air jordan',
+            quantity: '2',
+            price: 1000000,
+            callbackUrl: 'https://my-backend.com/'
+          }
+        })
       });
-      
-      window.location.href = session.checkoutUrl;
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.text();
+      console.log('Order created:', data);
     } catch (error) {
-      console.error('Payment failed:', error);
+      console.error('Error creating order:', error);
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <button 
-      onClick={handlePayment}
+      onClick={handleCreateOrder}
       disabled={loading}
       className="bg-indigo-600 text-white py-2 px-4 rounded"
     >
-      {loading ? 'Processing...' : 'Pay with Crypto'}
+      {loading ? 'Creating...' : 'Create Order'}
     </button>
   );
 }
 
-export default PaymentButton;
+export default CreateOrderButton;
 `;
       case 'node':
         return `
 const express = require('express');
-const { omnium } = require('omnium-node');
-
 const app = express();
 app.use(express.json());
 
-// Initialize the omnium client
-const gateway = new omnium({
-  apiKey: process.env.omnium_API_KEY,
-  environment: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'
-});
-
-// Route to create a payment session
-app.post('/api/create-payment', async (req, res) => {
+// Route to create an order
+app.post('/api/create-order', async (req, res) => {
   try {
-    const { amount, orderId, customerEmail } = req.body;
-    
-    const session = await gateway.createSession({
-      amount,
-      currency: 'USD',
-      redirectUrl: \`\${process.env.FRONTEND_URL}/payment/success\`,
-      cancelUrl: \`\${process.env.FRONTEND_URL}/payment/cancel\`,
-      metadata: {
-        orderId,
-        customerEmail
+    const response = await fetch('https://omnium-backend-production.up.railway.app/api/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api_key': process.env.OMNIUM_API_KEY
       },
-      webhookUrl: \`\${process.env.API_URL}/webhooks/payment\`
+      body: JSON.stringify({
+        data: {
+          seller: '0x753dFC03b4d37B3a316D0Fe5aB9F677C0D3C20f8',
+          product: 'Nike air jordan',
+          quantity: '2',
+          price: 1000000,
+          callbackUrl: process.env.CALLBACK_URL
+        }
+      })
     });
-    
-    res.json({ checkoutUrl: session.checkoutUrl });
-  } catch (error) {
-    console.error('Payment creation failed:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
 
-// Webhook to receive payment notifications
-app.post('/webhooks/payment', async (req, res) => {
-  const signature = req.headers['omnium-signature'];
-  
-  try {
-    const event = gateway.verifyWebhook(req.body, signature);
-    
-    if (event.type === 'payment.completed') {
-      // Update order status in your database
-      const { orderId } = event.data.metadata;
-      // await updateOrderStatus(orderId, 'paid');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-    
-    res.sendStatus(200);
+
+    const data = await response.text();
+    res.json(data);
   } catch (error) {
-    console.error('Invalid webhook:', error);
-    res.status(400).send('Invalid webhook signature');
+    console.error('Error creating order:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
