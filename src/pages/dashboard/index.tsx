@@ -1,5 +1,4 @@
 import { erc20Abi, formatUnits } from 'viem';
-import { ConnectButton } from '@xellar/kit';
 import {
   CreditCard,
   ArrowUpRight,
@@ -245,6 +244,7 @@ function Dashboard() {
                   <div
                     key={tx.hash}
                     className="flex items-center justify-between py-3 border-b border-slate-800/50 last:border-0"
+                    onClick={() => console.log(tx)}
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`p-2 rounded-lg ${tx.method === 'payWithToken' ? 'bg-purple-500/20 text-purple-500' : 'bg-green-500/20 text-green-500'}`}>
@@ -265,7 +265,13 @@ function Dashboard() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-medium text-white">
-                        {tx.decoded_input?.parameters[2]?.value.toString() || '0'} IDRX
+                        {(() => {
+                          const value = tx.decoded_input?.parameters[2]?.value;
+                          if (typeof value === 'string' || typeof value === 'number') {
+                            return `${formatUnits(BigInt(value), 2)} IDRX`;
+                          }
+                          return '0 IDRX';
+                        })()}
                       </div>
                       <a
                         href={`https://sepolia-blockscout.lisk.com/tx/${tx.hash}`}

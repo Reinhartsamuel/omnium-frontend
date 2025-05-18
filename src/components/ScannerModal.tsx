@@ -67,7 +67,6 @@ function ScannerModal({
         }
     };
 
-    const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
     const renderWalletPrompt = () => (
         <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-slate-800/50 rounded-xl text-center">
@@ -120,7 +119,7 @@ function ScannerModal({
                 </div>
             );
         } catch (error) {
-            return (
+            if (error) return (
                 <div className="text-red-400 p-4 bg-red-500/10 rounded-lg">
                     Invalid QR code data
                 </div>
