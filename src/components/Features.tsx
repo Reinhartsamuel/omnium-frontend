@@ -57,7 +57,7 @@ const Features: React.FC = () => {
             From startups to enterprises, our payment gateway scales with your needs
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <FeatureCard
@@ -69,7 +69,7 @@ const Features: React.FC = () => {
             />
           ))}
         </div>
-        
+
         <div className="mt-20 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 rounded-2xl p-8 border border-indigo-500/20 shadow-xl">
           <div className="flex flex-col md:flex-row items-center">
             <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-8">
@@ -94,17 +94,16 @@ const Features: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full md:w-1/2 bg-slate-800/60 rounded-lg p-4 font-mono text-sm text-gray-300 shadow-inner">
+            {/* <div className="w-full md:w-1/2 bg-slate-800/60 rounded-lg p-4 font-mono text-sm text-gray-300 shadow-inner">
               <div className="flex items-center text-xs text-gray-500 mb-2">
                 <div className="flex space-x-1 mr-2">
                   <div className="h-2 w-2 rounded-full bg-red-500"></div>
                   <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
                   <div className="h-2 w-2 rounded-full bg-green-500"></div>
                 </div>
-                <span>Terminal</span>
               </div>
               <pre className="space-y-2">
-                {/* <code className="block">
+                <code className="block">
                   <span className="text-green-400">$</span> npm install <span className="text-indigo-400">omnium-js</span>
                 </code>
                 <code className="block">
@@ -114,7 +113,7 @@ const Features: React.FC = () => {
                   <span className="text-purple-400">import</span> omnium <span className="text-purple-400">from</span> <span className="text-green-400">'omnium-js'</span>;
                 </code>
                 <code className="block">
-                  <span className="text-blue-400">const</span> gateway = <span className="text-purple-400">new</span> omnium({
+                  <span className="text-blue-400">const</span> gateway = <span className="text-purple-400">new</span> omnium({ });
                 </code>
                 <code className="block pl-2">
                   apiKey: <span className="text-green-400">'your_api_key'</span>,
@@ -123,13 +122,14 @@ const Features: React.FC = () => {
                   environment: <span className="text-green-400">'production'</span>
                 </code>
                 <code className="block">
-                  });
+
                 </code>
                 <code className="block">
                   <span className="text-gray-500"># Create a payment session</span>
                 </code>
                 <code className="block">
                   <span className="text-blue-400">const</span> session = <span className="text-purple-400">await</span> gateway.createSession({
+                  });
                   <code className="block pl-2">
                     amount: <span className="text-orange-400">100</span>,
                   </code>
@@ -139,12 +139,43 @@ const Features: React.FC = () => {
                   <code className="block pl-2">
                     redirectUrl: <span className="text-green-400">'https://your-site.com/success'</span>
                   </code>
-                  });
-                </code> */}
+                </code>
               </pre>
-            </div>
+            </div> */}
+            <pre className="space-y-2">
+              <code className="block">
+                <span className="text-gray-500"># Create an order via Omnium API</span>
+              </code>
+              <code className="text-sm block text-blue-400">const</code>{' '}
+              <code className="text-sm inline">response</code>{' '}
+              <code className="text-sm inline text-purple-400">= await</code>{' '}
+              <code className="text-sm inline">fetch(</code>
+              <code className="text-sm block pl-4 text-green-400">'https://omnium-backend-production.up.railway.app/api/order'</code>
+              <code className="text-sm block">, &#123;</code>
+              <code className="text-sm block pl-4">method: <span className="text-sm text-green-400">'POST'</span>,</code>
+              <code className="text-sm block pl-4">headers: &#123;</code>
+              <code className="text-sm block pl-8">"Content-Type": <span className="text-sm text-green-400">"application/json"</span>,</code>
+              <code className="text-sm block pl-8">"api_key": <span className="text-sm text-green-400">"your api key"</span></code>
+              <code className="text-sm block pl-4">&#125;,</code>
+              <code className="text-sm block pl-4">body: JSON.stringify(&#123;</code>
+              <code className="text-sm block pl-8">data: &#123;</code>
+              <code className="text-sm block pl-12">seller: <span className="text-sm text-green-400">'0x753dFC03b4d37B3a316D0Fe5aB9F677C0D3C20f8'</span>,</code>
+              <code className="text-sm block pl-12">product: <span className="text-sm text-green-400">'Nike air jordan'</span>,</code>
+              <code className="text-sm block pl-12">quantity: <span className="text-sm text-green-400">'2'</span>,</code>
+              <code className="text-sm block pl-12">price: <span className="text-sm text-orange-400">1000000</span>,</code>
+              <code className="text-sm block pl-12">callbackUrl: <span className="text-sm text-green-400">'https://my-backend.com/'</span></code>
+              <code className="text-sm block pl-8">&#125;</code>
+              <code className="text-sm block pl-4">&#125;)</code>
+              <code className="text-sm block">&#125;);</code>
+              <code className="text-sm block">
+                <span className="text-sm text-blue-400">const</span> result = <span className="text-sm text-purple-400">await</span> response.json();
+              </code>
+              <code className="text-sm block">console.log(result);</code>
+            </pre>
           </div>
         </div>
+
+
       </div>
     </section>
   );

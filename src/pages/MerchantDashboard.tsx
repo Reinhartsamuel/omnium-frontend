@@ -1,41 +1,102 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import CustomWalletButton from '../components/common/CustomWalletButton'
 import { ApiKeyModal } from '../components/dashboard/ApiKeyModal'
 import { DeleteConfirmationModal } from '../components/dashboard/DeleteConfirmationModal'
+import { formatUnits } from 'viem'
+import { supabase } from '../configs/supabase'
+
+interface ApiKey {
+  created_at: string
+  address: string
+  api_key: string
+  api_key_name: string
+}
+
+interface Order {
+  id: string
+  created_at: string
+  seller: string
+  price: bigint
+  status: 'CREATED' | 'FAILED' | 'PAID'
+  product: string
+}
 
 const MerchantDashboard = () => {
-  const { isConnected } = useAccount()
-  const [dateRange, setDateRange] = useState('today')
+  const { isConnected, address } = useAccount()
   const [showNewKeyModal, setShowNewKeyModal] = useState(false)
-  const [newKeyName, setNewKeyName] = useState('')
   const [deleteKeyId, setDeleteKeyId] = useState<string | null>(null)
-  const [apiKeys, setApiKeys] = useState([
-    { id: '1', name: 'Production Key', key: 'pk_live_123...abc', created: '2024-01-20' },
-    { id: '2', name: 'Test Key', key: 'pk_test_456...xyz', created: '2024-01-19' }
-  ])
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
+  const [isLoading, setIsLoading] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
 
-  const handleCreateKey = () => {
-    if (!newKeyName) return
-    const newKey = {
-      id: Date.now().toString(),
-      name: newKeyName,
-      key: `pk_${Math.random().toString(36).substring(2)}`,
-      created: new Date().toISOString().split('T')[0]
+
+  const fetchApiKeys = async () => {
+    if (!address) return
+
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('merchants_api')
+        .select('*')
+        .eq('address', address)
+
+      if (error) throw error
+      setApiKeys(data || [])
+    } catch (error) {
+      console.error('Error fetching API keys:', error)
+    } finally {
+      setIsLoading(false)
     }
-    setApiKeys([...apiKeys, newKey])
-    setNewKeyName('')
-    setShowNewKeyModal(false)
+  }
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      if (!address) return
+
+      setOrdersLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('seller', address)
+          .order('created_at', { ascending: false })
+          .limit(5)
+        console.log(data)
+
+        if (error) throw error
+        setOrders(data || [])
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+      } finally {
+        setOrdersLoading(false)
+      }
+    }
+
+    fetchRecentTransactions()
+    fetchApiKeys()
+  }, [address])
+
+  const handleDeleteKey = (apiKey: string) => {
+    setDeleteKeyId(apiKey)
   }
 
-  const handleDeleteKey = (id: string) => {
-    setDeleteKeyId(id)
-  }
+  const confirmDelete = async () => {
+    if (!deleteKeyId || !address) return
 
-  const confirmDelete = () => {
-    if (deleteKeyId) {
-      setApiKeys(apiKeys.filter(key => key.id !== deleteKeyId))
+    try {
+      const { error } = await supabase
+        .from('merchants_api')
+        .delete()
+        .eq('api_key', deleteKeyId)
+        .eq('address', address)
+
+      if (error) throw error
+
+      setApiKeys(apiKeys.filter(key => key.api_key !== deleteKeyId))
       setDeleteKeyId(null)
+    } catch (error) {
+      console.error('Error deleting API key:', error)
     }
   }
 
@@ -76,26 +137,10 @@ const MerchantDashboard = () => {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-            <h3 className="text-sm font-medium text-slate-400">Total Orders</h3>
-            <p className="mt-2 text-3xl font-semibold text-white">1,234</p>
-            <p className="mt-1 text-sm text-green-500">+12.3% from last period</p>
-          </div>
-          <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-            <h3 className="text-sm font-medium text-slate-400">Paid Orders</h3>
-            <p className="mt-2 text-3xl font-semibold text-white">1,198</p>
-            <p className="mt-1 text-sm text-green-500">+5.3% from last period</p>
-          </div>
-          <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-            <h3 className="text-sm font-medium text-slate-400">Revenue</h3>
-            <p className="mt-2 text-3xl font-semibold text-white">$12,345.67</p>
-            <p className="mt-1 text-sm text-green-500">+15.2% from last period</p>
-          </div>
-          <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
-            <h3 className="text-sm font-medium text-slate-400">Average Value</h3>
-            <p className="mt-2 text-3xl font-semibold text-white">$123.45</p>
-            <p className="mt-1 text-sm text-red-500">-2.1% from last period</p>
-          </div>
+          <TotalOrders address={address} />
+          <PaidOrders address={address} />
+          <Revenue address={address} />
+          <AverageValue address={address} />
         </div>
 
         {/* API Keys Section */}
@@ -112,33 +157,41 @@ const MerchantDashboard = () => {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm text-slate-400 border-b border-slate-800">
-                    <th className="pb-3 font-medium">Name</th>
-                    <th className="pb-3 font-medium">Key</th>
-                    <th className="pb-3 font-medium">Created</th>
-                    <th className="pb-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {apiKeys.map(key => (
-                    <tr key={key.id} className="border-b border-slate-800">
-                      <td className="py-4 text-slate-300">{key.name}</td>
-                      <td className="py-4 text-slate-300">{key.key}</td>
-                      <td className="py-4 text-slate-300">{key.created}</td>
-                      <td className="py-4">
-                        <button
-                          onClick={() => handleDeleteKey(key.id)}
-                          className="text-red-500 hover:text-red-400 transition"
-                        >
-                          Delete
-                        </button>
-                      </td>
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                </div>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-slate-400 border-b border-slate-800">
+                      <th className="pb-3 font-medium">Name</th>
+                      <th className="pb-3 font-medium">Key</th>
+                      <th className="pb-3 font-medium">Created</th>
+                      <th className="pb-3 font-medium">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="text-sm">
+                    {apiKeys.map(key => (
+                      <tr key={key.api_key} className="border-b border-slate-800">
+                        <td className="py-4 text-slate-300">{key.api_key_name}</td>
+                        <td className="py-4 text-slate-300">{key.api_key}</td>
+                        <td className="py-4 text-slate-300">
+                          {new Date(key.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="py-4">
+                          <button
+                            onClick={() => handleDeleteKey(key.api_key)}
+                            className="text-red-500 hover:text-red-400 transition"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
@@ -148,128 +201,75 @@ const MerchantDashboard = () => {
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-white">Recent Transactions</h2>
-              <div className="flex items-center space-x-4">
-                <select
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  className="bg-slate-800 border-0 rounded-lg text-sm text-slate-300 px-3 py-2 focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                </select>
-              </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm text-slate-400 border-b border-slate-800">
-                    <th className="pb-3 font-medium">Transaction ID</th>
-                    <th className="pb-3 font-medium">Date</th>
-                    <th className="pb-3 font-medium">Customer</th>
-                    <th className="pb-3 font-medium">Amount</th>
-                    <th className="pb-3 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  <tr className="border-b border-slate-800">
-                    <td className="py-4 text-slate-300">#TX123456</td>
-                    <td className="py-4 text-slate-300">2024-01-20 14:30</td>
-                    <td className="py-4 text-slate-300">0x1234...5678</td>
-                    <td className="py-4 text-slate-300">$100.00</td>
-                    <td className="py-4">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-500/10 text-green-500">Success</span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-slate-800">
-                    <td className="py-4 text-slate-300">#TX123455</td>
-                    <td className="py-4 text-slate-300">2024-01-20 14:25</td>
-                    <td className="py-4 text-slate-300">0x9876...4321</td>
-                    <td className="py-4 text-slate-300">$50.00</td>
-                    <td className="py-4">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-500/10 text-yellow-500">Pending</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 text-slate-300">#TX123454</td>
-                    <td className="py-4 text-slate-300">2024-01-20 14:20</td>
-                    <td className="py-4 text-slate-300">0x5432...8765</td>
-                    <td className="py-4 text-slate-300">$75.00</td>
-                    <td className="py-4">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-500/10 text-red-500">Failed</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              {ordersLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  No transactions found
+                </div>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-slate-400 border-b border-slate-800">
+                      <th className="pb-3 font-medium">Date</th>
+                      <th className="pb-3 font-medium">Product</th>
+                      <th className="pb-3 font-medium">Amount (IDRX)</th>
+                      <th className="pb-3 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {orders.map(order => (
+                      <tr key={order.id} className="border-b border-slate-800">
+                        <td className="py-4 text-slate-300">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="py-4 text-slate-300">{order.product}</td>
+                        <td className="py-4 text-slate-300">
+                          IDRX {order.price ? Number(formatUnits(order.price as bigint, 2)).toLocaleString() : '0'}
+                        </td>
+                        <td className="py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === 'PAID'
+                              ? 'bg-green-100 text-green-800'
+                              : order.status === 'CREATED'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                              }`}
+                          >
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
       </main>
 
       {/* New API Key Modal */}
-      {showNewKeyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-white mb-4">Create New API Key</h3>
-            <input
-              type="text"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              placeholder="Enter key name"
-              className="w-full bg-slate-800 border-0 rounded-lg text-white px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500"
-            />
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowNewKeyModal(false)}
-                className="px-4 py-2 text-slate-400 hover:text-slate-300 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateKey}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
       {/* API Keys Table */}
-      <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 mb-8">
-        {/* ... table header ... */}
-        <tbody className="text-sm">
-          {apiKeys.map(key => (
-            <tr key={key.id} className="border-b border-slate-800">
-              <td className="py-4 text-slate-300">{key.name}</td>
-              <td className="py-4 text-slate-300">{key.key}</td>
-              <td className="py-4 text-slate-300">{key.created}</td>
-              <td className="py-4">
-                <button
-                  onClick={() => handleDeleteKey(key.id)}
-                  className="text-red-500 hover:text-red-400 transition"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </div>
+
 
       {/* Modals */}
       {showNewKeyModal && (
         <ApiKeyModal
           onClose={() => setShowNewKeyModal(false)}
-          onSubmit={handleCreateKey}
+          fetchApiKeys={fetchApiKeys}
         />
       )}
 
       {deleteKeyId && (
         <DeleteConfirmationModal
-          keyName={apiKeys.find(k => k.id === deleteKeyId)?.name || ''}
+          keyName={apiKeys.find(k => k.api_key === deleteKeyId)?.api_key_name || ''}
           onConfirm={confirmDelete}
           onCancel={() => setDeleteKeyId(null)}
         />
@@ -279,3 +279,181 @@ const MerchantDashboard = () => {
 }
 
 export default MerchantDashboard
+
+
+
+
+const TotalOrders = ({ address }: { address: string | undefined }) => {
+  const [totalOrders, setTotalOrders] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    const countTotalOrders = async () => {
+      if (!address) return;
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact' })
+          .eq('seller', address)
+        if (error) throw error
+        setTotalOrders(data?.length || 0)
+      } catch (error) {
+        console.error('Error fetching total orders:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    countTotalOrders()
+  }, [])
+  return (
+    <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
+      <h3 className="text-sm font-medium text-slate-400">Total Orders</h3>
+      {isLoading ? (
+        <div className="mt-2 flex justify-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <p className="mt-2 text-3xl font-semibold text-white">
+          {totalOrders} 
+        </p>
+      )}
+    </div>
+  )
+}
+const PaidOrders = ({ address }: { address: string | undefined }) => {
+  const [totalOrders, setTotalOrders] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    const countTotalOrders = async () => {
+      if (!address) return;
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact' })
+          .eq('seller', address)
+          .eq('status', 'PAID')
+        if (error) throw error
+        setTotalOrders(data?.length || 0)
+      } catch (error) {
+        console.error('Error fetching total orders:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    countTotalOrders()
+  }, [])
+  return (
+    <>
+      <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
+        <h3 className="text-sm font-medium text-slate-400">Paid Orders</h3>
+        {isLoading ? (
+          <div className="mt-2 flex justify-center">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          </div>
+        ) : (
+          <p className="mt-2 text-3xl font-semibold text-white">
+            {totalOrders} 
+          </p>
+        )}
+      </div>
+    </>
+  )
+}
+const Revenue = ({ address }: { address: string | undefined }) => {
+  const [revenue, setRevenue] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      if (!address) return
+
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('price')
+          .eq('seller', address)
+          .eq('status', 'PAID')
+
+        if (error) throw error
+
+        const totalRevenue = data?.reduce((sum, order) => {
+          const price = Number(formatUnits(order.price as bigint, 2))
+          return sum + price
+        }, 0) || 0
+
+        setRevenue(totalRevenue)
+      } catch (error) {
+        console.error('Error fetching revenue:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRevenue()
+  }, [address])
+
+  return (
+    <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
+      <h3 className="text-sm font-medium text-slate-400">Revenue</h3>
+      {isLoading ? (
+        <div className="mt-2 flex justify-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <p className="mt-2 text-3xl font-semibold text-white">
+          {revenue.toLocaleString()} IDRX
+        </p>
+      )}
+    </div>
+  )
+}
+
+const AverageValue = ({ address }: { address: string | undefined }) => {
+  const [average, setAverage] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAverageValue = async () => {
+      if (!address) return
+
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('price')
+          .eq('seller', address)
+          .eq('status', 'PAID')
+
+        if (error) throw error
+
+        if (data && data.length > 0) {
+          const totalValue = data.reduce((sum, order) => {
+            const price = Number(formatUnits(order.price as bigint, 2))
+            return sum + price
+          }, 0)
+          setAverage(totalValue / data.length)
+        }
+      } catch (error) {
+        console.error('Error fetching average value:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchAverageValue()
+  }, [address])
+
+  return (
+    <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
+      <h3 className="text-sm font-medium text-slate-400">Average Value</h3>
+      {isLoading ? (
+        <div className="mt-2 flex justify-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <p className="mt-2 text-3xl font-semibold text-white">
+          {average.toLocaleString()} IDRX
+        </p>
+      )}
+    </div>
+  )
+}

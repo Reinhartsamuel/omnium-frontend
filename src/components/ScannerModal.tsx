@@ -5,6 +5,7 @@ import { DEFAULT_TOKEN } from "../constants/tokens";
 import { useAccount } from "wagmi";
 import CustomWalletButton from "./common/CustomWalletButton";
 import { Scanner } from "@yudiel/react-qr-scanner";
+import { formatUnits } from "viem";
 
 function ScannerModal({
     setIsQRModalOpen,
@@ -96,7 +97,7 @@ function ScannerModal({
                             <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
                                 <span className="text-gray-400">Amount</span>
                                 <span className="text-white font-medium">
-                                    {(parsedData.amount / 1000000).toLocaleString()} IDRX
+                                    {Number(formatUnits(parsedData.amount as bigint, 2)).toLocaleString()} IDRX
                                 </span>
                             </div>
                             <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">

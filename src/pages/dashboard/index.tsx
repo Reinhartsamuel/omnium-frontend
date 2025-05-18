@@ -136,11 +136,13 @@ function Dashboard() {
           {/* <ConnectButton className='mb-4' /> */}
           {/* <h2 className="text-lg font-medium mb-4">Total Balance</h2> */}
           <div className="text-4xl font-bold mb-4">
-            {isReading ?
-              'reading...'
-              :
-              ` IDRX ${data ? formatUnits(data as bigint, 2) : '0'}`
-            }
+            {isReading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              </div>
+            ) : (
+              ` IDRX ${data ? Number(formatUnits(data as bigint, 2)).toLocaleString() : '0'}`
+            )}
           </div>
           <div className="flex space-x-4">
             <button

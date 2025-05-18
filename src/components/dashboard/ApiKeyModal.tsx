@@ -1,17 +1,45 @@
 import { useState } from 'react'
+import { useAccount } from 'wagmi';
+
 
 interface ApiKeyModalProps {
   onClose: () => void
-  onSubmit: (name: string) => void
+  fetchApiKeys : () => void
 }
 
-export const ApiKeyModal = ({ onClose, onSubmit }: ApiKeyModalProps) => {
-  const [keyName, setKeyName] = useState('')
 
-  const handleSubmit = () => {
-    if (!keyName.trim()) return
-    onSubmit(keyName)
-    setKeyName('')
+export const ApiKeyModal = ({ onClose, fetchApiKeys }: ApiKeyModalProps) => {
+  const [keyName, setKeyName] = useState('');
+  const { address } = useAccount();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!keyName) return alert('Please enter a key name');
+    setIsLoading(true);
+    try {
+      const res = await fetch('http://localhost:3000/api/generate-api-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          api_key_name: keyName,
+          address,
+        })
+      });
+
+      const result = await res.json();
+      console.log(result);
+      fetchApiKeys();
+
+      
+      onClose();
+      setKeyName('')
+    } catch (error) {
+      if (error instanceof Error) alert(error.message)
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -41,10 +69,14 @@ export const ApiKeyModal = ({ onClose, onSubmit }: ApiKeyModalProps) => {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!keyName.trim()}
+              disabled={!keyName.trim() || isLoading}
               className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Key
+              {
+                isLoading ?
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> :
+                  'Create Key'
+              }
             </button>
           </div>
         </div>
