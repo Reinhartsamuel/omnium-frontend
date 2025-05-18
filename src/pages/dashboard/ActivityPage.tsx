@@ -29,12 +29,13 @@ interface TransactionData {
 function ActivityPage() {
     const { address } = useAccount();
     const [transactions, setTransactions] = useState<TransactionData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
             if (!address) return;
             try {
+                setIsLoading(true);
                 const response = await fetch(`https://sepolia-blockscout.lisk.com/api/v2/addresses/${address}/transactions`);
                 const data = await response.json();
                 setTransactions(data.items || []);
@@ -62,7 +63,12 @@ function ActivityPage() {
                 <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800 p-6">
                     <h1 className="text-2xl font-bold text-white mb-4">Activity</h1>
                     
-                    {isLoading ? (
+                    {!address  ?  
+                    
+                    <div className="text-slate-400 text-center py-8">Connect Your Wallet!</div>
+                    
+                    :
+                    isLoading ? (
                         <div className="text-slate-400 text-center py-8">Loading transactions...</div>
                     ) : transactions.length === 0 ? (
                         <div className="text-slate-400 text-center py-8">No transactions found</div>
@@ -127,7 +133,9 @@ function ActivityPage() {
                                 </div>
                             ))}
                         </div>
-                    )}
+                    )
+                }
+ 
                 </div>
             </div>
             <BottomBar />

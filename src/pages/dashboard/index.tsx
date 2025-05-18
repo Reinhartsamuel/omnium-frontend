@@ -89,7 +89,7 @@ interface TransactionData {
 function Dashboard() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<TransactionData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { address } = useAccount();
   const chainId = useChainId();
@@ -98,6 +98,7 @@ function Dashboard() {
     async function fetchData() {
         if (!address) return;
         try {
+            setIsLoading(true);
             const response = await fetch(`https://sepolia-blockscout.lisk.com/api/v2/addresses/${address}/transactions`);
             const data = await response.json();
             setTransactions(data.items || []);
