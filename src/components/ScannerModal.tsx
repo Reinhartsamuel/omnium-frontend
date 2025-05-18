@@ -5,6 +5,8 @@ import { DEFAULT_TOKEN } from "../constants/tokens";
 import { getTransaction } from "viem/actions";
 import { config } from "../configs/config";
 import { BrowserMultiFormatReader } from "@zxing/browser";
+import { useAccount } from "wagmi";
+import CustomWalletButton from "./common/CustomWalletButton";
 
 function ScannerModal({
     setIsQRModalOpen,
@@ -13,21 +15,19 @@ function ScannerModal({
 }) {
     const [isScanned, setIsScanned] = useState(false);
     const { handlePayWithToken } = useHandlePayWithToken();
-    // const [qrString, setQrString] = useState("Not Found");
     const [scannedData, setScannedData] = useState<string | null>(null);
     const [stopScanner, setStopScanner] = useState<(() => void) | null>(null);
+    const { isConnected } = useAccount();
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const onPay = async () => {
         const data = scannedData ? JSON.parse(scannedData) : {};
         console.log(data, 'data');
-        // const data = JSON.parse(qrString)
-        console.log(data);
         try {
             const result = await handlePayWithToken(
-                DEFAULT_TOKEN.address, // IDRX token
-                data.sellerAddress, // seller
-                data.amount, // amount
+                DEFAULT_TOKEN.address,
+                data.sellerAddress,
+                data.amount,
                 {
                     productName: data.productName,
                     orderId: data.orderId,
@@ -35,9 +35,6 @@ function ScannerModal({
                 }
             )
             console.log(result, 'result')
-            // const transaction = await getTransaction(config, {
-            //     hash: result,
-            //   })
             alert(`Transaction success with hash ${result}`)
             setIsQRModalOpen(false);
         } catch (err) {
@@ -101,46 +98,59 @@ function ScannerModal({
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     };
 
+    const renderWalletPrompt = () => (
+        <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-slate-800/50 rounded-xl text-center">
+            <h3 className="text-xl font-semibold text-white mb-2">Connect Your Wallet</h3>
+            <p className="text-gray-400 mb-4">Please connect your wallet to proceed with the payment</p>
+            <CustomWalletButton />
+        </div>
+    );
+
     const renderScannedData = (data: string) => {
         try {
             const parsedData = JSON.parse(data);
             return (
                 <div className="space-y-4 bg-slate-800/50 rounded-xl p-4">
-                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                        <span className="text-gray-400">Product</span>
-                        <span className="text-white font-medium">{parsedData.productName}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                        <span className="text-gray-400">Quantity</span>
-                        <span className="text-white font-medium">{parsedData.quantity} units</span>
-                    </div>
+                    {!isConnected ? (
+                        renderWalletPrompt()
+                    ) : (
+                        <>
+                            <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                                <span className="text-gray-400">Product</span>
+                                <span className="text-white font-medium">{parsedData.productName}</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                                <span className="text-gray-400">Quantity</span>
+                                <span className="text-white font-medium">{parsedData.quantity} units</span>
+                            </div>
 
-                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                        <span className="text-gray-400">Amount</span>
-                        <span className="text-white font-medium">
-                            {(parsedData.amount / 1000000).toLocaleString()} IDRX
-                        </span>
-                    </div>
+                            <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                                <span className="text-gray-400">Amount</span>
+                                <span className="text-white font-medium">
+                                    {(parsedData.amount / 1000000).toLocaleString()} IDRX
+                                </span>
+                            </div>
 
-                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                        <span className="text-gray-400">Order ID</span>
-                        <span className="text-white font-medium">#{parsedData.orderId}</span>
-                    </div>
+                            <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                                <span className="text-gray-400">Order ID</span>
+                                <span className="text-white font-medium">#{parsedData.orderId}</span>
+                            </div>
 
-                    <div className="p-3 bg-slate-700/50 rounded-lg">
-                        <div className="text-gray-400 mb-1">Seller Address</div>
-                        <div className="text-white font-medium break-all">
-                            {/* {formatAddress(parsedData.sellerAddress)} */}
-                            {parsedData.sellerAddress}
-                        </div>
-                    </div>
+                            <div className="p-3 bg-slate-700/50 rounded-lg">
+                                <div className="text-gray-400 mb-1">Seller Address</div>
+                                <div className="text-white font-medium break-all">
+                                    {parsedData.sellerAddress}
+                                </div>
+                            </div>
 
-                    <button
-                        onClick={onPay}
-                        className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 px-4 rounded-lg font-medium hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
-                        Confirm Payment
-                    </button>
+                            <button
+                                onClick={onPay}
+                                className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 px-4 rounded-lg font-medium hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                                Confirm Payment
+                            </button>
+                        </>
+                    )}
                 </div>
             );
         } catch (error) {
@@ -170,9 +180,7 @@ function ScannerModal({
                 </div>
 
                 {!scannedData ? (
-                    <>
                     <video ref={videoRef} className="w-full aspect-square rounded-xl" />
-                    </>
                 ) : (
                     renderScannedData(scannedData)
                 )}
